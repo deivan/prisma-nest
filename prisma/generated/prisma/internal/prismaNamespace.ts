@@ -384,7 +384,9 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  User: 'User'
+  User: 'User',
+  GameSession: 'GameSession',
+  RouletteBet: 'RouletteBet'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -400,7 +402,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user"
+    modelProps: "user" | "gameSession" | "rouletteBet"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -478,6 +480,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    GameSession: {
+      payload: Prisma.$GameSessionPayload<ExtArgs>
+      fields: Prisma.GameSessionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.GameSessionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameSessionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.GameSessionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameSessionPayload>
+        }
+        findFirst: {
+          args: Prisma.GameSessionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameSessionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.GameSessionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameSessionPayload>
+        }
+        findMany: {
+          args: Prisma.GameSessionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameSessionPayload>[]
+        }
+        create: {
+          args: Prisma.GameSessionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameSessionPayload>
+        }
+        createMany: {
+          args: Prisma.GameSessionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.GameSessionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameSessionPayload>[]
+        }
+        delete: {
+          args: Prisma.GameSessionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameSessionPayload>
+        }
+        update: {
+          args: Prisma.GameSessionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameSessionPayload>
+        }
+        deleteMany: {
+          args: Prisma.GameSessionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.GameSessionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.GameSessionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameSessionPayload>[]
+        }
+        upsert: {
+          args: Prisma.GameSessionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameSessionPayload>
+        }
+        aggregate: {
+          args: Prisma.GameSessionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateGameSession>
+        }
+        groupBy: {
+          args: Prisma.GameSessionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GameSessionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.GameSessionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GameSessionCountAggregateOutputType> | number
+        }
+      }
+    }
+    RouletteBet: {
+      payload: Prisma.$RouletteBetPayload<ExtArgs>
+      fields: Prisma.RouletteBetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RouletteBetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RouletteBetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RouletteBetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RouletteBetPayload>
+        }
+        findFirst: {
+          args: Prisma.RouletteBetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RouletteBetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RouletteBetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RouletteBetPayload>
+        }
+        findMany: {
+          args: Prisma.RouletteBetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RouletteBetPayload>[]
+        }
+        create: {
+          args: Prisma.RouletteBetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RouletteBetPayload>
+        }
+        createMany: {
+          args: Prisma.RouletteBetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RouletteBetCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RouletteBetPayload>[]
+        }
+        delete: {
+          args: Prisma.RouletteBetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RouletteBetPayload>
+        }
+        update: {
+          args: Prisma.RouletteBetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RouletteBetPayload>
+        }
+        deleteMany: {
+          args: Prisma.RouletteBetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RouletteBetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RouletteBetUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RouletteBetPayload>[]
+        }
+        upsert: {
+          args: Prisma.RouletteBetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RouletteBetPayload>
+        }
+        aggregate: {
+          args: Prisma.RouletteBetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRouletteBet>
+        }
+        groupBy: {
+          args: Prisma.RouletteBetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RouletteBetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RouletteBetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RouletteBetCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -531,6 +681,30 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const GameSessionScalarFieldEnum = {
+  id: 'id',
+  serverSeed: 'serverSeed',
+  serverHash: 'serverHash',
+  clientSeed: 'clientSeed',
+  nonce: 'nonce',
+  createdAt: 'createdAt'
+} as const
+
+export type GameSessionScalarFieldEnum = (typeof GameSessionScalarFieldEnum)[keyof typeof GameSessionScalarFieldEnum]
+
+
+export const RouletteBetScalarFieldEnum = {
+  id: 'id',
+  number: 'number',
+  gameId: 'gameId',
+  userId: 'userId',
+  bet: 'bet',
+  createdAt: 'createdAt'
+} as const
+
+export type RouletteBetScalarFieldEnum = (typeof RouletteBetScalarFieldEnum)[keyof typeof RouletteBetScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -545,6 +719,14 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 
@@ -719,6 +901,8 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  gameSession?: Prisma.GameSessionOmit
+  rouletteBet?: Prisma.RouletteBetOmit
 }
 
 /* Types for Logging */

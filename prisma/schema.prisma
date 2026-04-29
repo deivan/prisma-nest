@@ -24,5 +24,31 @@ model User {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
+  rouletteBets RouletteBet[]
+
+  @@schema("prisma")
+}
+
+model GameSession {
+  id            String   @id @default(uuid())
+  serverSeed    String   // Секретний ключ сервера
+  serverHash    String   // Хеш (SHA256), який бачить юзер до гри
+  clientSeed    String?  // Сід від юзера
+  nonce         Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  @@schema("prisma")
+}
+
+model RouletteBet {
+  id        String   @id @default(uuid())
+  number    Int      // Результат рулетки (0-36)
+  gameId    String @map("game_id")
+  userId    Int    @map("user_id")
+  bet       Int   
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
   @@schema("prisma")
 }

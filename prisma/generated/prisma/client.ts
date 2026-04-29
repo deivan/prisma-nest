@@ -44,3 +44,13 @@ export { Prisma }
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model GameSession
+ * 
+ */
+export type GameSession = Prisma.GameSessionModel
+/**
+ * Model RouletteBet
+ * 
+ */
+export type RouletteBet = Prisma.RouletteBetModel
