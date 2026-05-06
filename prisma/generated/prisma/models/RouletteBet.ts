@@ -27,83 +27,109 @@ export type AggregateRouletteBet = {
 }
 
 export type RouletteBetAvgAggregateOutputType = {
-  number: number | null
-  userId: number | null
+  betAmount: number | null
   bet: number | null
+  winningNumber: number | null
+  nonce: number | null
+  userId: number | null
 }
 
 export type RouletteBetSumAggregateOutputType = {
-  number: number | null
-  userId: number | null
+  betAmount: number | null
   bet: number | null
+  winningNumber: number | null
+  nonce: number | null
+  userId: number | null
 }
 
 export type RouletteBetMinAggregateOutputType = {
   id: string | null
-  number: number | null
   gameId: string | null
-  userId: number | null
+  betAmount: number | null
   bet: number | null
+  winningNumber: number | null
+  isWin: boolean | null
+  nonce: number | null
   createdAt: Date | null
+  userId: number | null
 }
 
 export type RouletteBetMaxAggregateOutputType = {
   id: string | null
-  number: number | null
   gameId: string | null
-  userId: number | null
+  betAmount: number | null
   bet: number | null
+  winningNumber: number | null
+  isWin: boolean | null
+  nonce: number | null
   createdAt: Date | null
+  userId: number | null
 }
 
 export type RouletteBetCountAggregateOutputType = {
   id: number
-  number: number
   gameId: number
-  userId: number
+  betAmount: number
   bet: number
+  winningNumber: number
+  isWin: number
+  nonce: number
   createdAt: number
+  userId: number
   _all: number
 }
 
 
 export type RouletteBetAvgAggregateInputType = {
-  number?: true
-  userId?: true
+  betAmount?: true
   bet?: true
+  winningNumber?: true
+  nonce?: true
+  userId?: true
 }
 
 export type RouletteBetSumAggregateInputType = {
-  number?: true
-  userId?: true
+  betAmount?: true
   bet?: true
+  winningNumber?: true
+  nonce?: true
+  userId?: true
 }
 
 export type RouletteBetMinAggregateInputType = {
   id?: true
-  number?: true
   gameId?: true
-  userId?: true
+  betAmount?: true
   bet?: true
+  winningNumber?: true
+  isWin?: true
+  nonce?: true
   createdAt?: true
+  userId?: true
 }
 
 export type RouletteBetMaxAggregateInputType = {
   id?: true
-  number?: true
   gameId?: true
-  userId?: true
+  betAmount?: true
   bet?: true
+  winningNumber?: true
+  isWin?: true
+  nonce?: true
   createdAt?: true
+  userId?: true
 }
 
 export type RouletteBetCountAggregateInputType = {
   id?: true
-  number?: true
   gameId?: true
-  userId?: true
+  betAmount?: true
   bet?: true
+  winningNumber?: true
+  isWin?: true
+  nonce?: true
   createdAt?: true
+  userId?: true
   _all?: true
 }
 
@@ -195,11 +221,14 @@ export type RouletteBetGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 
 export type RouletteBetGroupByOutputType = {
   id: string
-  number: number
   gameId: string
-  userId: number
+  betAmount: number
   bet: number
+  winningNumber: number
+  isWin: boolean
+  nonce: number
   createdAt: Date
+  userId: number
   _count: RouletteBetCountAggregateOutputType | null
   _avg: RouletteBetAvgAggregateOutputType | null
   _sum: RouletteBetSumAggregateOutputType | null
@@ -227,21 +256,29 @@ export type RouletteBetWhereInput = {
   OR?: Prisma.RouletteBetWhereInput[]
   NOT?: Prisma.RouletteBetWhereInput | Prisma.RouletteBetWhereInput[]
   id?: Prisma.StringFilter<"RouletteBet"> | string
-  number?: Prisma.IntFilter<"RouletteBet"> | number
   gameId?: Prisma.StringFilter<"RouletteBet"> | string
-  userId?: Prisma.IntFilter<"RouletteBet"> | number
+  betAmount?: Prisma.IntFilter<"RouletteBet"> | number
   bet?: Prisma.IntFilter<"RouletteBet"> | number
+  winningNumber?: Prisma.IntFilter<"RouletteBet"> | number
+  isWin?: Prisma.BoolFilter<"RouletteBet"> | boolean
+  nonce?: Prisma.IntFilter<"RouletteBet"> | number
   createdAt?: Prisma.DateTimeFilter<"RouletteBet"> | Date | string
+  userId?: Prisma.IntFilter<"RouletteBet"> | number
+  gameSession?: Prisma.XOR<Prisma.GameSessionScalarRelationFilter, Prisma.GameSessionWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type RouletteBetOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  number?: Prisma.SortOrder
   gameId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  betAmount?: Prisma.SortOrder
   bet?: Prisma.SortOrder
+  winningNumber?: Prisma.SortOrder
+  isWin?: Prisma.SortOrder
+  nonce?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
+  gameSession?: Prisma.GameSessionOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -250,21 +287,28 @@ export type RouletteBetWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.RouletteBetWhereInput | Prisma.RouletteBetWhereInput[]
   OR?: Prisma.RouletteBetWhereInput[]
   NOT?: Prisma.RouletteBetWhereInput | Prisma.RouletteBetWhereInput[]
-  number?: Prisma.IntFilter<"RouletteBet"> | number
   gameId?: Prisma.StringFilter<"RouletteBet"> | string
-  userId?: Prisma.IntFilter<"RouletteBet"> | number
+  betAmount?: Prisma.IntFilter<"RouletteBet"> | number
   bet?: Prisma.IntFilter<"RouletteBet"> | number
+  winningNumber?: Prisma.IntFilter<"RouletteBet"> | number
+  isWin?: Prisma.BoolFilter<"RouletteBet"> | boolean
+  nonce?: Prisma.IntFilter<"RouletteBet"> | number
   createdAt?: Prisma.DateTimeFilter<"RouletteBet"> | Date | string
+  userId?: Prisma.IntFilter<"RouletteBet"> | number
+  gameSession?: Prisma.XOR<Prisma.GameSessionScalarRelationFilter, Prisma.GameSessionWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
 export type RouletteBetOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  number?: Prisma.SortOrder
   gameId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  betAmount?: Prisma.SortOrder
   bet?: Prisma.SortOrder
+  winningNumber?: Prisma.SortOrder
+  isWin?: Prisma.SortOrder
+  nonce?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   _count?: Prisma.RouletteBetCountOrderByAggregateInput
   _avg?: Prisma.RouletteBetAvgOrderByAggregateInput
   _max?: Prisma.RouletteBetMaxOrderByAggregateInput
@@ -277,73 +321,96 @@ export type RouletteBetScalarWhereWithAggregatesInput = {
   OR?: Prisma.RouletteBetScalarWhereWithAggregatesInput[]
   NOT?: Prisma.RouletteBetScalarWhereWithAggregatesInput | Prisma.RouletteBetScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"RouletteBet"> | string
-  number?: Prisma.IntWithAggregatesFilter<"RouletteBet"> | number
   gameId?: Prisma.StringWithAggregatesFilter<"RouletteBet"> | string
-  userId?: Prisma.IntWithAggregatesFilter<"RouletteBet"> | number
+  betAmount?: Prisma.IntWithAggregatesFilter<"RouletteBet"> | number
   bet?: Prisma.IntWithAggregatesFilter<"RouletteBet"> | number
+  winningNumber?: Prisma.IntWithAggregatesFilter<"RouletteBet"> | number
+  isWin?: Prisma.BoolWithAggregatesFilter<"RouletteBet"> | boolean
+  nonce?: Prisma.IntWithAggregatesFilter<"RouletteBet"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"RouletteBet"> | Date | string
+  userId?: Prisma.IntWithAggregatesFilter<"RouletteBet"> | number
 }
 
 export type RouletteBetCreateInput = {
   id?: string
-  number: number
-  gameId: string
+  betAmount: number
   bet: number
+  winningNumber: number
+  isWin: boolean
+  nonce: number
   createdAt?: Date | string
+  gameSession: Prisma.GameSessionCreateNestedOneWithoutBetsInput
   user: Prisma.UserCreateNestedOneWithoutRouletteBetsInput
 }
 
 export type RouletteBetUncheckedCreateInput = {
   id?: string
-  number: number
   gameId: string
-  userId: number
+  betAmount: number
   bet: number
+  winningNumber: number
+  isWin: boolean
+  nonce: number
   createdAt?: Date | string
+  userId: number
 }
 
 export type RouletteBetUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  number?: Prisma.IntFieldUpdateOperationsInput | number
-  gameId?: Prisma.StringFieldUpdateOperationsInput | string
+  betAmount?: Prisma.IntFieldUpdateOperationsInput | number
   bet?: Prisma.IntFieldUpdateOperationsInput | number
+  winningNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  isWin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gameSession?: Prisma.GameSessionUpdateOneRequiredWithoutBetsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutRouletteBetsNestedInput
 }
 
 export type RouletteBetUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  number?: Prisma.IntFieldUpdateOperationsInput | number
   gameId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  betAmount?: Prisma.IntFieldUpdateOperationsInput | number
   bet?: Prisma.IntFieldUpdateOperationsInput | number
+  winningNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  isWin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type RouletteBetCreateManyInput = {
   id?: string
-  number: number
   gameId: string
-  userId: number
+  betAmount: number
   bet: number
+  winningNumber: number
+  isWin: boolean
+  nonce: number
   createdAt?: Date | string
+  userId: number
 }
 
 export type RouletteBetUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  number?: Prisma.IntFieldUpdateOperationsInput | number
-  gameId?: Prisma.StringFieldUpdateOperationsInput | string
+  betAmount?: Prisma.IntFieldUpdateOperationsInput | number
   bet?: Prisma.IntFieldUpdateOperationsInput | number
+  winningNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  isWin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type RouletteBetUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  number?: Prisma.IntFieldUpdateOperationsInput | number
   gameId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  betAmount?: Prisma.IntFieldUpdateOperationsInput | number
   bet?: Prisma.IntFieldUpdateOperationsInput | number
+  winningNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  isWin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type RouletteBetListRelationFilter = {
@@ -358,41 +425,54 @@ export type RouletteBetOrderByRelationAggregateInput = {
 
 export type RouletteBetCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  number?: Prisma.SortOrder
   gameId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  betAmount?: Prisma.SortOrder
   bet?: Prisma.SortOrder
+  winningNumber?: Prisma.SortOrder
+  isWin?: Prisma.SortOrder
+  nonce?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type RouletteBetAvgOrderByAggregateInput = {
-  number?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  betAmount?: Prisma.SortOrder
   bet?: Prisma.SortOrder
+  winningNumber?: Prisma.SortOrder
+  nonce?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type RouletteBetMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  number?: Prisma.SortOrder
   gameId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  betAmount?: Prisma.SortOrder
   bet?: Prisma.SortOrder
+  winningNumber?: Prisma.SortOrder
+  isWin?: Prisma.SortOrder
+  nonce?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type RouletteBetMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  number?: Prisma.SortOrder
   gameId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  betAmount?: Prisma.SortOrder
   bet?: Prisma.SortOrder
+  winningNumber?: Prisma.SortOrder
+  isWin?: Prisma.SortOrder
+  nonce?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type RouletteBetSumOrderByAggregateInput = {
-  number?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  betAmount?: Prisma.SortOrder
   bet?: Prisma.SortOrder
+  winningNumber?: Prisma.SortOrder
+  nonce?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type RouletteBetCreateNestedManyWithoutUserInput = {
@@ -437,19 +517,67 @@ export type RouletteBetUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.RouletteBetScalarWhereInput | Prisma.RouletteBetScalarWhereInput[]
 }
 
+export type RouletteBetCreateNestedManyWithoutGameSessionInput = {
+  create?: Prisma.XOR<Prisma.RouletteBetCreateWithoutGameSessionInput, Prisma.RouletteBetUncheckedCreateWithoutGameSessionInput> | Prisma.RouletteBetCreateWithoutGameSessionInput[] | Prisma.RouletteBetUncheckedCreateWithoutGameSessionInput[]
+  connectOrCreate?: Prisma.RouletteBetCreateOrConnectWithoutGameSessionInput | Prisma.RouletteBetCreateOrConnectWithoutGameSessionInput[]
+  createMany?: Prisma.RouletteBetCreateManyGameSessionInputEnvelope
+  connect?: Prisma.RouletteBetWhereUniqueInput | Prisma.RouletteBetWhereUniqueInput[]
+}
+
+export type RouletteBetUncheckedCreateNestedManyWithoutGameSessionInput = {
+  create?: Prisma.XOR<Prisma.RouletteBetCreateWithoutGameSessionInput, Prisma.RouletteBetUncheckedCreateWithoutGameSessionInput> | Prisma.RouletteBetCreateWithoutGameSessionInput[] | Prisma.RouletteBetUncheckedCreateWithoutGameSessionInput[]
+  connectOrCreate?: Prisma.RouletteBetCreateOrConnectWithoutGameSessionInput | Prisma.RouletteBetCreateOrConnectWithoutGameSessionInput[]
+  createMany?: Prisma.RouletteBetCreateManyGameSessionInputEnvelope
+  connect?: Prisma.RouletteBetWhereUniqueInput | Prisma.RouletteBetWhereUniqueInput[]
+}
+
+export type RouletteBetUpdateManyWithoutGameSessionNestedInput = {
+  create?: Prisma.XOR<Prisma.RouletteBetCreateWithoutGameSessionInput, Prisma.RouletteBetUncheckedCreateWithoutGameSessionInput> | Prisma.RouletteBetCreateWithoutGameSessionInput[] | Prisma.RouletteBetUncheckedCreateWithoutGameSessionInput[]
+  connectOrCreate?: Prisma.RouletteBetCreateOrConnectWithoutGameSessionInput | Prisma.RouletteBetCreateOrConnectWithoutGameSessionInput[]
+  upsert?: Prisma.RouletteBetUpsertWithWhereUniqueWithoutGameSessionInput | Prisma.RouletteBetUpsertWithWhereUniqueWithoutGameSessionInput[]
+  createMany?: Prisma.RouletteBetCreateManyGameSessionInputEnvelope
+  set?: Prisma.RouletteBetWhereUniqueInput | Prisma.RouletteBetWhereUniqueInput[]
+  disconnect?: Prisma.RouletteBetWhereUniqueInput | Prisma.RouletteBetWhereUniqueInput[]
+  delete?: Prisma.RouletteBetWhereUniqueInput | Prisma.RouletteBetWhereUniqueInput[]
+  connect?: Prisma.RouletteBetWhereUniqueInput | Prisma.RouletteBetWhereUniqueInput[]
+  update?: Prisma.RouletteBetUpdateWithWhereUniqueWithoutGameSessionInput | Prisma.RouletteBetUpdateWithWhereUniqueWithoutGameSessionInput[]
+  updateMany?: Prisma.RouletteBetUpdateManyWithWhereWithoutGameSessionInput | Prisma.RouletteBetUpdateManyWithWhereWithoutGameSessionInput[]
+  deleteMany?: Prisma.RouletteBetScalarWhereInput | Prisma.RouletteBetScalarWhereInput[]
+}
+
+export type RouletteBetUncheckedUpdateManyWithoutGameSessionNestedInput = {
+  create?: Prisma.XOR<Prisma.RouletteBetCreateWithoutGameSessionInput, Prisma.RouletteBetUncheckedCreateWithoutGameSessionInput> | Prisma.RouletteBetCreateWithoutGameSessionInput[] | Prisma.RouletteBetUncheckedCreateWithoutGameSessionInput[]
+  connectOrCreate?: Prisma.RouletteBetCreateOrConnectWithoutGameSessionInput | Prisma.RouletteBetCreateOrConnectWithoutGameSessionInput[]
+  upsert?: Prisma.RouletteBetUpsertWithWhereUniqueWithoutGameSessionInput | Prisma.RouletteBetUpsertWithWhereUniqueWithoutGameSessionInput[]
+  createMany?: Prisma.RouletteBetCreateManyGameSessionInputEnvelope
+  set?: Prisma.RouletteBetWhereUniqueInput | Prisma.RouletteBetWhereUniqueInput[]
+  disconnect?: Prisma.RouletteBetWhereUniqueInput | Prisma.RouletteBetWhereUniqueInput[]
+  delete?: Prisma.RouletteBetWhereUniqueInput | Prisma.RouletteBetWhereUniqueInput[]
+  connect?: Prisma.RouletteBetWhereUniqueInput | Prisma.RouletteBetWhereUniqueInput[]
+  update?: Prisma.RouletteBetUpdateWithWhereUniqueWithoutGameSessionInput | Prisma.RouletteBetUpdateWithWhereUniqueWithoutGameSessionInput[]
+  updateMany?: Prisma.RouletteBetUpdateManyWithWhereWithoutGameSessionInput | Prisma.RouletteBetUpdateManyWithWhereWithoutGameSessionInput[]
+  deleteMany?: Prisma.RouletteBetScalarWhereInput | Prisma.RouletteBetScalarWhereInput[]
+}
+
 export type RouletteBetCreateWithoutUserInput = {
   id?: string
-  number: number
-  gameId: string
+  betAmount: number
   bet: number
+  winningNumber: number
+  isWin: boolean
+  nonce: number
   createdAt?: Date | string
+  gameSession: Prisma.GameSessionCreateNestedOneWithoutBetsInput
 }
 
 export type RouletteBetUncheckedCreateWithoutUserInput = {
   id?: string
-  number: number
   gameId: string
+  betAmount: number
   bet: number
+  winningNumber: number
+  isWin: boolean
+  nonce: number
   createdAt?: Date | string
 }
 
@@ -484,109 +612,238 @@ export type RouletteBetScalarWhereInput = {
   OR?: Prisma.RouletteBetScalarWhereInput[]
   NOT?: Prisma.RouletteBetScalarWhereInput | Prisma.RouletteBetScalarWhereInput[]
   id?: Prisma.StringFilter<"RouletteBet"> | string
-  number?: Prisma.IntFilter<"RouletteBet"> | number
   gameId?: Prisma.StringFilter<"RouletteBet"> | string
-  userId?: Prisma.IntFilter<"RouletteBet"> | number
+  betAmount?: Prisma.IntFilter<"RouletteBet"> | number
   bet?: Prisma.IntFilter<"RouletteBet"> | number
+  winningNumber?: Prisma.IntFilter<"RouletteBet"> | number
+  isWin?: Prisma.BoolFilter<"RouletteBet"> | boolean
+  nonce?: Prisma.IntFilter<"RouletteBet"> | number
   createdAt?: Prisma.DateTimeFilter<"RouletteBet"> | Date | string
+  userId?: Prisma.IntFilter<"RouletteBet"> | number
+}
+
+export type RouletteBetCreateWithoutGameSessionInput = {
+  id?: string
+  betAmount: number
+  bet: number
+  winningNumber: number
+  isWin: boolean
+  nonce: number
+  createdAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutRouletteBetsInput
+}
+
+export type RouletteBetUncheckedCreateWithoutGameSessionInput = {
+  id?: string
+  betAmount: number
+  bet: number
+  winningNumber: number
+  isWin: boolean
+  nonce: number
+  createdAt?: Date | string
+  userId: number
+}
+
+export type RouletteBetCreateOrConnectWithoutGameSessionInput = {
+  where: Prisma.RouletteBetWhereUniqueInput
+  create: Prisma.XOR<Prisma.RouletteBetCreateWithoutGameSessionInput, Prisma.RouletteBetUncheckedCreateWithoutGameSessionInput>
+}
+
+export type RouletteBetCreateManyGameSessionInputEnvelope = {
+  data: Prisma.RouletteBetCreateManyGameSessionInput | Prisma.RouletteBetCreateManyGameSessionInput[]
+  skipDuplicates?: boolean
+}
+
+export type RouletteBetUpsertWithWhereUniqueWithoutGameSessionInput = {
+  where: Prisma.RouletteBetWhereUniqueInput
+  update: Prisma.XOR<Prisma.RouletteBetUpdateWithoutGameSessionInput, Prisma.RouletteBetUncheckedUpdateWithoutGameSessionInput>
+  create: Prisma.XOR<Prisma.RouletteBetCreateWithoutGameSessionInput, Prisma.RouletteBetUncheckedCreateWithoutGameSessionInput>
+}
+
+export type RouletteBetUpdateWithWhereUniqueWithoutGameSessionInput = {
+  where: Prisma.RouletteBetWhereUniqueInput
+  data: Prisma.XOR<Prisma.RouletteBetUpdateWithoutGameSessionInput, Prisma.RouletteBetUncheckedUpdateWithoutGameSessionInput>
+}
+
+export type RouletteBetUpdateManyWithWhereWithoutGameSessionInput = {
+  where: Prisma.RouletteBetScalarWhereInput
+  data: Prisma.XOR<Prisma.RouletteBetUpdateManyMutationInput, Prisma.RouletteBetUncheckedUpdateManyWithoutGameSessionInput>
 }
 
 export type RouletteBetCreateManyUserInput = {
   id?: string
-  number: number
   gameId: string
+  betAmount: number
   bet: number
+  winningNumber: number
+  isWin: boolean
+  nonce: number
   createdAt?: Date | string
 }
 
 export type RouletteBetUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  number?: Prisma.IntFieldUpdateOperationsInput | number
-  gameId?: Prisma.StringFieldUpdateOperationsInput | string
+  betAmount?: Prisma.IntFieldUpdateOperationsInput | number
   bet?: Prisma.IntFieldUpdateOperationsInput | number
+  winningNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  isWin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gameSession?: Prisma.GameSessionUpdateOneRequiredWithoutBetsNestedInput
 }
 
 export type RouletteBetUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  number?: Prisma.IntFieldUpdateOperationsInput | number
   gameId?: Prisma.StringFieldUpdateOperationsInput | string
+  betAmount?: Prisma.IntFieldUpdateOperationsInput | number
   bet?: Prisma.IntFieldUpdateOperationsInput | number
+  winningNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  isWin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type RouletteBetUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  number?: Prisma.IntFieldUpdateOperationsInput | number
   gameId?: Prisma.StringFieldUpdateOperationsInput | string
+  betAmount?: Prisma.IntFieldUpdateOperationsInput | number
   bet?: Prisma.IntFieldUpdateOperationsInput | number
+  winningNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  isWin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RouletteBetCreateManyGameSessionInput = {
+  id?: string
+  betAmount: number
+  bet: number
+  winningNumber: number
+  isWin: boolean
+  nonce: number
+  createdAt?: Date | string
+  userId: number
+}
+
+export type RouletteBetUpdateWithoutGameSessionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  betAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  bet?: Prisma.IntFieldUpdateOperationsInput | number
+  winningNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  isWin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutRouletteBetsNestedInput
+}
+
+export type RouletteBetUncheckedUpdateWithoutGameSessionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  betAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  bet?: Prisma.IntFieldUpdateOperationsInput | number
+  winningNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  isWin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type RouletteBetUncheckedUpdateManyWithoutGameSessionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  betAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  bet?: Prisma.IntFieldUpdateOperationsInput | number
+  winningNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  isWin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
 
 export type RouletteBetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  number?: boolean
   gameId?: boolean
-  userId?: boolean
+  betAmount?: boolean
   bet?: boolean
+  winningNumber?: boolean
+  isWin?: boolean
+  nonce?: boolean
   createdAt?: boolean
+  userId?: boolean
+  gameSession?: boolean | Prisma.GameSessionDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["rouletteBet"]>
 
 export type RouletteBetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  number?: boolean
   gameId?: boolean
-  userId?: boolean
+  betAmount?: boolean
   bet?: boolean
+  winningNumber?: boolean
+  isWin?: boolean
+  nonce?: boolean
   createdAt?: boolean
+  userId?: boolean
+  gameSession?: boolean | Prisma.GameSessionDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["rouletteBet"]>
 
 export type RouletteBetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  number?: boolean
   gameId?: boolean
-  userId?: boolean
+  betAmount?: boolean
   bet?: boolean
+  winningNumber?: boolean
+  isWin?: boolean
+  nonce?: boolean
   createdAt?: boolean
+  userId?: boolean
+  gameSession?: boolean | Prisma.GameSessionDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["rouletteBet"]>
 
 export type RouletteBetSelectScalar = {
   id?: boolean
-  number?: boolean
   gameId?: boolean
-  userId?: boolean
+  betAmount?: boolean
   bet?: boolean
+  winningNumber?: boolean
+  isWin?: boolean
+  nonce?: boolean
   createdAt?: boolean
+  userId?: boolean
 }
 
-export type RouletteBetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "number" | "gameId" | "userId" | "bet" | "createdAt", ExtArgs["result"]["rouletteBet"]>
+export type RouletteBetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "gameId" | "betAmount" | "bet" | "winningNumber" | "isWin" | "nonce" | "createdAt" | "userId", ExtArgs["result"]["rouletteBet"]>
 export type RouletteBetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  gameSession?: boolean | Prisma.GameSessionDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type RouletteBetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  gameSession?: boolean | Prisma.GameSessionDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type RouletteBetIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  gameSession?: boolean | Prisma.GameSessionDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $RouletteBetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "RouletteBet"
   objects: {
+    gameSession: Prisma.$GameSessionPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    number: number
     gameId: string
-    userId: number
+    betAmount: number
     bet: number
+    winningNumber: number
+    isWin: boolean
+    nonce: number
     createdAt: Date
+    userId: number
   }, ExtArgs["result"]["rouletteBet"]>
   composites: {}
 }
@@ -981,6 +1238,7 @@ readonly fields: RouletteBetFieldRefs;
  */
 export interface Prisma__RouletteBetClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  gameSession<T extends Prisma.GameSessionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GameSessionDefaultArgs<ExtArgs>>): Prisma.Prisma__GameSessionClient<runtime.Types.Result.GetResult<Prisma.$GameSessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1012,11 +1270,14 @@ export interface Prisma__RouletteBetClient<T, Null = never, ExtArgs extends runt
  */
 export interface RouletteBetFieldRefs {
   readonly id: Prisma.FieldRef<"RouletteBet", 'String'>
-  readonly number: Prisma.FieldRef<"RouletteBet", 'Int'>
   readonly gameId: Prisma.FieldRef<"RouletteBet", 'String'>
-  readonly userId: Prisma.FieldRef<"RouletteBet", 'Int'>
+  readonly betAmount: Prisma.FieldRef<"RouletteBet", 'Int'>
   readonly bet: Prisma.FieldRef<"RouletteBet", 'Int'>
+  readonly winningNumber: Prisma.FieldRef<"RouletteBet", 'Int'>
+  readonly isWin: Prisma.FieldRef<"RouletteBet", 'Boolean'>
+  readonly nonce: Prisma.FieldRef<"RouletteBet", 'Int'>
   readonly createdAt: Prisma.FieldRef<"RouletteBet", 'DateTime'>
+  readonly userId: Prisma.FieldRef<"RouletteBet", 'Int'>
 }
     
 

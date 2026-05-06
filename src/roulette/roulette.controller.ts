@@ -18,9 +18,12 @@ export class RouletteController {
     return this.rouletteService.findAll();
   }
 
-  @Get('spin/:clientSeed')
-  spin(@Param('clientSeed') clientSeed: string) {
-    return this.rouletteService.spinOne(clientSeed);
+  @Post('spin')
+  spin(
+    @Body('sessionId') id: string,
+    @Body('bet') bet: number
+  ) {
+    return this.rouletteService.spinOne(id, bet);
   }
 
   @Patch(':id')

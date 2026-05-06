@@ -10,7 +10,14 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async create(data: CreateUserDto): Promise<User> {
-    return await this.prisma.user.create({ data });
+    let user;
+    try {
+      user = await this.prisma.user.create({ data });
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error; // Rethrow the error after logging
+    }
+    return user;
   }
 
   async findAll(params: {

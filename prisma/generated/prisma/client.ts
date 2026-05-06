@@ -45,6 +45,16 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model Profiles
+ * 
+ */
+export type Profiles = Prisma.ProfilesModel
+/**
+ * Model Addresses
+ * 
+ */
+export type Addresses = Prisma.AddressesModel
+/**
  * Model GameSession
  * 
  */
@@ -54,3 +64,13 @@ export type GameSession = Prisma.GameSessionModel
  * 
  */
 export type RouletteBet = Prisma.RouletteBetModel
+/**
+ * Model Wallet
+ * 
+ */
+export type Wallet = Prisma.WalletModel
+/**
+ * Model Transaction
+ * 
+ */
+export type Transaction = Prisma.TransactionModel

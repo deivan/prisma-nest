@@ -52,8 +52,12 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  Profiles: 'Profiles',
+  Addresses: 'Addresses',
   GameSession: 'GameSession',
-  RouletteBet: 'RouletteBet'
+  RouletteBet: 'RouletteBet',
+  Wallet: 'Wallet',
+  Transaction: 'Transaction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -74,20 +78,57 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UserScalarFieldEnum = {
   id: 'id',
-  email: 'email',
-  firstName: 'firstName',
-  lastName: 'lastName',
+  username: 'username',
   password: 'password',
-  status: 'status',
+  email: 'email',
+  isBanned: 'isBanned',
+  isDeleted: 'isDeleted',
+  banEndAt: 'banEndAt',
+  role: 'role',
+  lastLoginIP: 'lastLoginIP',
+  lastLoginAt: 'lastLoginAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const ProfilesScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  rating: 'rating',
+  avatar: 'avatar',
+  level: 'level',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  walletId: 'walletId'
+} as const
+
+export type ProfilesScalarFieldEnum = (typeof ProfilesScalarFieldEnum)[keyof typeof ProfilesScalarFieldEnum]
+
+
+export const AddressesScalarFieldEnum = {
+  userId: 'userId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  phoneNumber: 'phoneNumber',
+  address: 'address',
+  address2: 'address2',
+  country: 'country',
+  postalCode: 'postalCode',
+  city: 'city',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AddressesScalarFieldEnum = (typeof AddressesScalarFieldEnum)[keyof typeof AddressesScalarFieldEnum]
+
+
 export const GameSessionScalarFieldEnum = {
   id: 'id',
+  userId: 'userId',
   serverSeed: 'serverSeed',
   serverHash: 'serverHash',
   clientSeed: 'clientSeed',
@@ -100,14 +141,46 @@ export type GameSessionScalarFieldEnum = (typeof GameSessionScalarFieldEnum)[key
 
 export const RouletteBetScalarFieldEnum = {
   id: 'id',
-  number: 'number',
   gameId: 'gameId',
-  userId: 'userId',
+  betAmount: 'betAmount',
   bet: 'bet',
-  createdAt: 'createdAt'
+  winningNumber: 'winningNumber',
+  isWin: 'isWin',
+  nonce: 'nonce',
+  createdAt: 'createdAt',
+  userId: 'userId'
 } as const
 
 export type RouletteBetScalarFieldEnum = (typeof RouletteBetScalarFieldEnum)[keyof typeof RouletteBetScalarFieldEnum]
+
+
+export const WalletScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  balance: 'balance',
+  currency: 'currency',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WalletScalarFieldEnum = (typeof WalletScalarFieldEnum)[keyof typeof WalletScalarFieldEnum]
+
+
+export const TransactionScalarFieldEnum = {
+  id: 'id',
+  walletId: 'walletId',
+  type: 'type',
+  status: 'status',
+  amount: 'amount',
+  idempotencyKey: 'idempotencyKey',
+  referenceId: 'referenceId',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
 
 
 export const SortOrder = {

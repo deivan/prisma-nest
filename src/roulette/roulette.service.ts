@@ -30,7 +30,9 @@ export class RouletteService {
     const gameRoom = await this.prisma.gameSession.create({
       data: {
         serverSeed,
-        serverHash
+        serverHash,
+        clientSeed: '12345', // Replace with actual client seed
+        userId: 1
       }
     });
     // GameRoom = gameRoom.id;
@@ -38,29 +40,39 @@ export class RouletteService {
   }
 
   findAll() {
-    return `This action returns all roulette`;
+    const gameSessions = this.prisma.gameSession.findMany();
+    return gameSessions;
   }
 
-  async spinOne(clientSeed: string) {
+  async spinOne(GameRoom: string, bet: number) {
     const gameSession = await this.prisma.gameSession.findUnique({
       where: { id: GameRoom }
     });
     if (!gameSession) {
       return { success: false, message: 'Game session not found' };
     }
-    const result = generateResult(gameSession.serverSeed, clientSeed, gameSession.nonce);
+    const result = generateResult(gameSession.serverSeed, gameSession.clientSeed, gameSession.nonce);
+
     await this.prisma.gameSession.update({
       where: { id: GameRoom },
       data: { nonce: gameSession.nonce + 1 }
     });
-    await this.prisma.rouletteBet.create({
-      data: {
-        number: result,
-        gameId: GameRoom,
-        userId: 1, // Replace with actual user ID
-        bet: 10 // Replace with actual bet amount
-      }
-    });
+    try {
+      await this.prisma.rouletteBet.create({
+        data: {
+          gameId: GameRoom,
+          nonce: gameSession.nonce,
+          winningNumber: result,
+          bet: bet,
+          isWin: result === bet, // Replace with actual win condition
+          userId: 1, // Replace with actual user ID
+          betAmount : 100 // Replace with actual bet amount
+        }
+      });
+    } catch (error) {
+      console.error('Error creating bet:', error);
+      throw error; // Rethrow the error after logging
+    }
 
     return { success: true, result };
   }

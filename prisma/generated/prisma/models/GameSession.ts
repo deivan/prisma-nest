@@ -27,15 +27,18 @@ export type AggregateGameSession = {
 }
 
 export type GameSessionAvgAggregateOutputType = {
+  userId: number | null
   nonce: number | null
 }
 
 export type GameSessionSumAggregateOutputType = {
+  userId: number | null
   nonce: number | null
 }
 
 export type GameSessionMinAggregateOutputType = {
   id: string | null
+  userId: number | null
   serverSeed: string | null
   serverHash: string | null
   clientSeed: string | null
@@ -45,6 +48,7 @@ export type GameSessionMinAggregateOutputType = {
 
 export type GameSessionMaxAggregateOutputType = {
   id: string | null
+  userId: number | null
   serverSeed: string | null
   serverHash: string | null
   clientSeed: string | null
@@ -54,6 +58,7 @@ export type GameSessionMaxAggregateOutputType = {
 
 export type GameSessionCountAggregateOutputType = {
   id: number
+  userId: number
   serverSeed: number
   serverHash: number
   clientSeed: number
@@ -64,15 +69,18 @@ export type GameSessionCountAggregateOutputType = {
 
 
 export type GameSessionAvgAggregateInputType = {
+  userId?: true
   nonce?: true
 }
 
 export type GameSessionSumAggregateInputType = {
+  userId?: true
   nonce?: true
 }
 
 export type GameSessionMinAggregateInputType = {
   id?: true
+  userId?: true
   serverSeed?: true
   serverHash?: true
   clientSeed?: true
@@ -82,6 +90,7 @@ export type GameSessionMinAggregateInputType = {
 
 export type GameSessionMaxAggregateInputType = {
   id?: true
+  userId?: true
   serverSeed?: true
   serverHash?: true
   clientSeed?: true
@@ -91,6 +100,7 @@ export type GameSessionMaxAggregateInputType = {
 
 export type GameSessionCountAggregateInputType = {
   id?: true
+  userId?: true
   serverSeed?: true
   serverHash?: true
   clientSeed?: true
@@ -187,9 +197,10 @@ export type GameSessionGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 
 export type GameSessionGroupByOutputType = {
   id: string
+  userId: number
   serverSeed: string
   serverHash: string
-  clientSeed: string | null
+  clientSeed: string
   nonce: number
   createdAt: Date
   _count: GameSessionCountAggregateOutputType | null
@@ -219,20 +230,26 @@ export type GameSessionWhereInput = {
   OR?: Prisma.GameSessionWhereInput[]
   NOT?: Prisma.GameSessionWhereInput | Prisma.GameSessionWhereInput[]
   id?: Prisma.StringFilter<"GameSession"> | string
+  userId?: Prisma.IntFilter<"GameSession"> | number
   serverSeed?: Prisma.StringFilter<"GameSession"> | string
   serverHash?: Prisma.StringFilter<"GameSession"> | string
-  clientSeed?: Prisma.StringNullableFilter<"GameSession"> | string | null
+  clientSeed?: Prisma.StringFilter<"GameSession"> | string
   nonce?: Prisma.IntFilter<"GameSession"> | number
   createdAt?: Prisma.DateTimeFilter<"GameSession"> | Date | string
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  bets?: Prisma.RouletteBetListRelationFilter
 }
 
 export type GameSessionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   serverSeed?: Prisma.SortOrder
   serverHash?: Prisma.SortOrder
-  clientSeed?: Prisma.SortOrderInput | Prisma.SortOrder
+  clientSeed?: Prisma.SortOrder
   nonce?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  user?: Prisma.UserOrderByWithRelationInput
+  bets?: Prisma.RouletteBetOrderByRelationAggregateInput
 }
 
 export type GameSessionWhereUniqueInput = Prisma.AtLeast<{
@@ -240,18 +257,22 @@ export type GameSessionWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.GameSessionWhereInput | Prisma.GameSessionWhereInput[]
   OR?: Prisma.GameSessionWhereInput[]
   NOT?: Prisma.GameSessionWhereInput | Prisma.GameSessionWhereInput[]
+  userId?: Prisma.IntFilter<"GameSession"> | number
   serverSeed?: Prisma.StringFilter<"GameSession"> | string
   serverHash?: Prisma.StringFilter<"GameSession"> | string
-  clientSeed?: Prisma.StringNullableFilter<"GameSession"> | string | null
+  clientSeed?: Prisma.StringFilter<"GameSession"> | string
   nonce?: Prisma.IntFilter<"GameSession"> | number
   createdAt?: Prisma.DateTimeFilter<"GameSession"> | Date | string
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  bets?: Prisma.RouletteBetListRelationFilter
 }, "id">
 
 export type GameSessionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   serverSeed?: Prisma.SortOrder
   serverHash?: Prisma.SortOrder
-  clientSeed?: Prisma.SortOrderInput | Prisma.SortOrder
+  clientSeed?: Prisma.SortOrder
   nonce?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.GameSessionCountOrderByAggregateInput
@@ -266,9 +287,10 @@ export type GameSessionScalarWhereWithAggregatesInput = {
   OR?: Prisma.GameSessionScalarWhereWithAggregatesInput[]
   NOT?: Prisma.GameSessionScalarWhereWithAggregatesInput | Prisma.GameSessionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"GameSession"> | string
+  userId?: Prisma.IntWithAggregatesFilter<"GameSession"> | number
   serverSeed?: Prisma.StringWithAggregatesFilter<"GameSession"> | string
   serverHash?: Prisma.StringWithAggregatesFilter<"GameSession"> | string
-  clientSeed?: Prisma.StringNullableWithAggregatesFilter<"GameSession"> | string | null
+  clientSeed?: Prisma.StringWithAggregatesFilter<"GameSession"> | string
   nonce?: Prisma.IntWithAggregatesFilter<"GameSession"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"GameSession"> | Date | string
 }
@@ -277,43 +299,52 @@ export type GameSessionCreateInput = {
   id?: string
   serverSeed: string
   serverHash: string
-  clientSeed?: string | null
+  clientSeed: string
   nonce?: number
   createdAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutGameSessionsInput
+  bets?: Prisma.RouletteBetCreateNestedManyWithoutGameSessionInput
 }
 
 export type GameSessionUncheckedCreateInput = {
   id?: string
+  userId: number
   serverSeed: string
   serverHash: string
-  clientSeed?: string | null
+  clientSeed: string
   nonce?: number
   createdAt?: Date | string
+  bets?: Prisma.RouletteBetUncheckedCreateNestedManyWithoutGameSessionInput
 }
 
 export type GameSessionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   serverSeed?: Prisma.StringFieldUpdateOperationsInput | string
   serverHash?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientSeed?: Prisma.StringFieldUpdateOperationsInput | string
   nonce?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutGameSessionsNestedInput
+  bets?: Prisma.RouletteBetUpdateManyWithoutGameSessionNestedInput
 }
 
 export type GameSessionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
   serverSeed?: Prisma.StringFieldUpdateOperationsInput | string
   serverHash?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientSeed?: Prisma.StringFieldUpdateOperationsInput | string
   nonce?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bets?: Prisma.RouletteBetUncheckedUpdateManyWithoutGameSessionNestedInput
 }
 
 export type GameSessionCreateManyInput = {
   id?: string
+  userId: number
   serverSeed: string
   serverHash: string
-  clientSeed?: string | null
+  clientSeed: string
   nonce?: number
   createdAt?: Date | string
 }
@@ -322,22 +353,34 @@ export type GameSessionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   serverSeed?: Prisma.StringFieldUpdateOperationsInput | string
   serverHash?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientSeed?: Prisma.StringFieldUpdateOperationsInput | string
   nonce?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type GameSessionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
   serverSeed?: Prisma.StringFieldUpdateOperationsInput | string
   serverHash?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientSeed?: Prisma.StringFieldUpdateOperationsInput | string
   nonce?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type GameSessionListRelationFilter = {
+  every?: Prisma.GameSessionWhereInput
+  some?: Prisma.GameSessionWhereInput
+  none?: Prisma.GameSessionWhereInput
+}
+
+export type GameSessionOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
 export type GameSessionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   serverSeed?: Prisma.SortOrder
   serverHash?: Prisma.SortOrder
   clientSeed?: Prisma.SortOrder
@@ -346,11 +389,13 @@ export type GameSessionCountOrderByAggregateInput = {
 }
 
 export type GameSessionAvgOrderByAggregateInput = {
+  userId?: Prisma.SortOrder
   nonce?: Prisma.SortOrder
 }
 
 export type GameSessionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   serverSeed?: Prisma.SortOrder
   serverHash?: Prisma.SortOrder
   clientSeed?: Prisma.SortOrder
@@ -360,6 +405,7 @@ export type GameSessionMaxOrderByAggregateInput = {
 
 export type GameSessionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   serverSeed?: Prisma.SortOrder
   serverHash?: Prisma.SortOrder
   clientSeed?: Prisma.SortOrder
@@ -368,44 +414,293 @@ export type GameSessionMinOrderByAggregateInput = {
 }
 
 export type GameSessionSumOrderByAggregateInput = {
+  userId?: Prisma.SortOrder
   nonce?: Prisma.SortOrder
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
+export type GameSessionScalarRelationFilter = {
+  is?: Prisma.GameSessionWhereInput
+  isNot?: Prisma.GameSessionWhereInput
 }
 
+export type GameSessionCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.GameSessionCreateWithoutUserInput, Prisma.GameSessionUncheckedCreateWithoutUserInput> | Prisma.GameSessionCreateWithoutUserInput[] | Prisma.GameSessionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.GameSessionCreateOrConnectWithoutUserInput | Prisma.GameSessionCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.GameSessionCreateManyUserInputEnvelope
+  connect?: Prisma.GameSessionWhereUniqueInput | Prisma.GameSessionWhereUniqueInput[]
+}
+
+export type GameSessionUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.GameSessionCreateWithoutUserInput, Prisma.GameSessionUncheckedCreateWithoutUserInput> | Prisma.GameSessionCreateWithoutUserInput[] | Prisma.GameSessionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.GameSessionCreateOrConnectWithoutUserInput | Prisma.GameSessionCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.GameSessionCreateManyUserInputEnvelope
+  connect?: Prisma.GameSessionWhereUniqueInput | Prisma.GameSessionWhereUniqueInput[]
+}
+
+export type GameSessionUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.GameSessionCreateWithoutUserInput, Prisma.GameSessionUncheckedCreateWithoutUserInput> | Prisma.GameSessionCreateWithoutUserInput[] | Prisma.GameSessionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.GameSessionCreateOrConnectWithoutUserInput | Prisma.GameSessionCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.GameSessionUpsertWithWhereUniqueWithoutUserInput | Prisma.GameSessionUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.GameSessionCreateManyUserInputEnvelope
+  set?: Prisma.GameSessionWhereUniqueInput | Prisma.GameSessionWhereUniqueInput[]
+  disconnect?: Prisma.GameSessionWhereUniqueInput | Prisma.GameSessionWhereUniqueInput[]
+  delete?: Prisma.GameSessionWhereUniqueInput | Prisma.GameSessionWhereUniqueInput[]
+  connect?: Prisma.GameSessionWhereUniqueInput | Prisma.GameSessionWhereUniqueInput[]
+  update?: Prisma.GameSessionUpdateWithWhereUniqueWithoutUserInput | Prisma.GameSessionUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.GameSessionUpdateManyWithWhereWithoutUserInput | Prisma.GameSessionUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.GameSessionScalarWhereInput | Prisma.GameSessionScalarWhereInput[]
+}
+
+export type GameSessionUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.GameSessionCreateWithoutUserInput, Prisma.GameSessionUncheckedCreateWithoutUserInput> | Prisma.GameSessionCreateWithoutUserInput[] | Prisma.GameSessionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.GameSessionCreateOrConnectWithoutUserInput | Prisma.GameSessionCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.GameSessionUpsertWithWhereUniqueWithoutUserInput | Prisma.GameSessionUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.GameSessionCreateManyUserInputEnvelope
+  set?: Prisma.GameSessionWhereUniqueInput | Prisma.GameSessionWhereUniqueInput[]
+  disconnect?: Prisma.GameSessionWhereUniqueInput | Prisma.GameSessionWhereUniqueInput[]
+  delete?: Prisma.GameSessionWhereUniqueInput | Prisma.GameSessionWhereUniqueInput[]
+  connect?: Prisma.GameSessionWhereUniqueInput | Prisma.GameSessionWhereUniqueInput[]
+  update?: Prisma.GameSessionUpdateWithWhereUniqueWithoutUserInput | Prisma.GameSessionUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.GameSessionUpdateManyWithWhereWithoutUserInput | Prisma.GameSessionUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.GameSessionScalarWhereInput | Prisma.GameSessionScalarWhereInput[]
+}
+
+export type GameSessionCreateNestedOneWithoutBetsInput = {
+  create?: Prisma.XOR<Prisma.GameSessionCreateWithoutBetsInput, Prisma.GameSessionUncheckedCreateWithoutBetsInput>
+  connectOrCreate?: Prisma.GameSessionCreateOrConnectWithoutBetsInput
+  connect?: Prisma.GameSessionWhereUniqueInput
+}
+
+export type GameSessionUpdateOneRequiredWithoutBetsNestedInput = {
+  create?: Prisma.XOR<Prisma.GameSessionCreateWithoutBetsInput, Prisma.GameSessionUncheckedCreateWithoutBetsInput>
+  connectOrCreate?: Prisma.GameSessionCreateOrConnectWithoutBetsInput
+  upsert?: Prisma.GameSessionUpsertWithoutBetsInput
+  connect?: Prisma.GameSessionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GameSessionUpdateToOneWithWhereWithoutBetsInput, Prisma.GameSessionUpdateWithoutBetsInput>, Prisma.GameSessionUncheckedUpdateWithoutBetsInput>
+}
+
+export type GameSessionCreateWithoutUserInput = {
+  id?: string
+  serverSeed: string
+  serverHash: string
+  clientSeed: string
+  nonce?: number
+  createdAt?: Date | string
+  bets?: Prisma.RouletteBetCreateNestedManyWithoutGameSessionInput
+}
+
+export type GameSessionUncheckedCreateWithoutUserInput = {
+  id?: string
+  serverSeed: string
+  serverHash: string
+  clientSeed: string
+  nonce?: number
+  createdAt?: Date | string
+  bets?: Prisma.RouletteBetUncheckedCreateNestedManyWithoutGameSessionInput
+}
+
+export type GameSessionCreateOrConnectWithoutUserInput = {
+  where: Prisma.GameSessionWhereUniqueInput
+  create: Prisma.XOR<Prisma.GameSessionCreateWithoutUserInput, Prisma.GameSessionUncheckedCreateWithoutUserInput>
+}
+
+export type GameSessionCreateManyUserInputEnvelope = {
+  data: Prisma.GameSessionCreateManyUserInput | Prisma.GameSessionCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type GameSessionUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.GameSessionWhereUniqueInput
+  update: Prisma.XOR<Prisma.GameSessionUpdateWithoutUserInput, Prisma.GameSessionUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.GameSessionCreateWithoutUserInput, Prisma.GameSessionUncheckedCreateWithoutUserInput>
+}
+
+export type GameSessionUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.GameSessionWhereUniqueInput
+  data: Prisma.XOR<Prisma.GameSessionUpdateWithoutUserInput, Prisma.GameSessionUncheckedUpdateWithoutUserInput>
+}
+
+export type GameSessionUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.GameSessionScalarWhereInput
+  data: Prisma.XOR<Prisma.GameSessionUpdateManyMutationInput, Prisma.GameSessionUncheckedUpdateManyWithoutUserInput>
+}
+
+export type GameSessionScalarWhereInput = {
+  AND?: Prisma.GameSessionScalarWhereInput | Prisma.GameSessionScalarWhereInput[]
+  OR?: Prisma.GameSessionScalarWhereInput[]
+  NOT?: Prisma.GameSessionScalarWhereInput | Prisma.GameSessionScalarWhereInput[]
+  id?: Prisma.StringFilter<"GameSession"> | string
+  userId?: Prisma.IntFilter<"GameSession"> | number
+  serverSeed?: Prisma.StringFilter<"GameSession"> | string
+  serverHash?: Prisma.StringFilter<"GameSession"> | string
+  clientSeed?: Prisma.StringFilter<"GameSession"> | string
+  nonce?: Prisma.IntFilter<"GameSession"> | number
+  createdAt?: Prisma.DateTimeFilter<"GameSession"> | Date | string
+}
+
+export type GameSessionCreateWithoutBetsInput = {
+  id?: string
+  serverSeed: string
+  serverHash: string
+  clientSeed: string
+  nonce?: number
+  createdAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutGameSessionsInput
+}
+
+export type GameSessionUncheckedCreateWithoutBetsInput = {
+  id?: string
+  userId: number
+  serverSeed: string
+  serverHash: string
+  clientSeed: string
+  nonce?: number
+  createdAt?: Date | string
+}
+
+export type GameSessionCreateOrConnectWithoutBetsInput = {
+  where: Prisma.GameSessionWhereUniqueInput
+  create: Prisma.XOR<Prisma.GameSessionCreateWithoutBetsInput, Prisma.GameSessionUncheckedCreateWithoutBetsInput>
+}
+
+export type GameSessionUpsertWithoutBetsInput = {
+  update: Prisma.XOR<Prisma.GameSessionUpdateWithoutBetsInput, Prisma.GameSessionUncheckedUpdateWithoutBetsInput>
+  create: Prisma.XOR<Prisma.GameSessionCreateWithoutBetsInput, Prisma.GameSessionUncheckedCreateWithoutBetsInput>
+  where?: Prisma.GameSessionWhereInput
+}
+
+export type GameSessionUpdateToOneWithWhereWithoutBetsInput = {
+  where?: Prisma.GameSessionWhereInput
+  data: Prisma.XOR<Prisma.GameSessionUpdateWithoutBetsInput, Prisma.GameSessionUncheckedUpdateWithoutBetsInput>
+}
+
+export type GameSessionUpdateWithoutBetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  serverSeed?: Prisma.StringFieldUpdateOperationsInput | string
+  serverHash?: Prisma.StringFieldUpdateOperationsInput | string
+  clientSeed?: Prisma.StringFieldUpdateOperationsInput | string
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutGameSessionsNestedInput
+}
+
+export type GameSessionUncheckedUpdateWithoutBetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  serverSeed?: Prisma.StringFieldUpdateOperationsInput | string
+  serverHash?: Prisma.StringFieldUpdateOperationsInput | string
+  clientSeed?: Prisma.StringFieldUpdateOperationsInput | string
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type GameSessionCreateManyUserInput = {
+  id?: string
+  serverSeed: string
+  serverHash: string
+  clientSeed: string
+  nonce?: number
+  createdAt?: Date | string
+}
+
+export type GameSessionUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  serverSeed?: Prisma.StringFieldUpdateOperationsInput | string
+  serverHash?: Prisma.StringFieldUpdateOperationsInput | string
+  clientSeed?: Prisma.StringFieldUpdateOperationsInput | string
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bets?: Prisma.RouletteBetUpdateManyWithoutGameSessionNestedInput
+}
+
+export type GameSessionUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  serverSeed?: Prisma.StringFieldUpdateOperationsInput | string
+  serverHash?: Prisma.StringFieldUpdateOperationsInput | string
+  clientSeed?: Prisma.StringFieldUpdateOperationsInput | string
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bets?: Prisma.RouletteBetUncheckedUpdateManyWithoutGameSessionNestedInput
+}
+
+export type GameSessionUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  serverSeed?: Prisma.StringFieldUpdateOperationsInput | string
+  serverHash?: Prisma.StringFieldUpdateOperationsInput | string
+  clientSeed?: Prisma.StringFieldUpdateOperationsInput | string
+  nonce?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type GameSessionCountOutputType
+ */
+
+export type GameSessionCountOutputType = {
+  bets: number
+}
+
+export type GameSessionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  bets?: boolean | GameSessionCountOutputTypeCountBetsArgs
+}
+
+/**
+ * GameSessionCountOutputType without action
+ */
+export type GameSessionCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the GameSessionCountOutputType
+   */
+  select?: Prisma.GameSessionCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * GameSessionCountOutputType without action
+ */
+export type GameSessionCountOutputTypeCountBetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RouletteBetWhereInput
+}
 
 
 export type GameSessionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  userId?: boolean
   serverSeed?: boolean
   serverHash?: boolean
   clientSeed?: boolean
   nonce?: boolean
   createdAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  bets?: boolean | Prisma.GameSession$betsArgs<ExtArgs>
+  _count?: boolean | Prisma.GameSessionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["gameSession"]>
 
 export type GameSessionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  userId?: boolean
   serverSeed?: boolean
   serverHash?: boolean
   clientSeed?: boolean
   nonce?: boolean
   createdAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["gameSession"]>
 
 export type GameSessionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  userId?: boolean
   serverSeed?: boolean
   serverHash?: boolean
   clientSeed?: boolean
   nonce?: boolean
   createdAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["gameSession"]>
 
 export type GameSessionSelectScalar = {
   id?: boolean
+  userId?: boolean
   serverSeed?: boolean
   serverHash?: boolean
   clientSeed?: boolean
@@ -413,16 +708,31 @@ export type GameSessionSelectScalar = {
   createdAt?: boolean
 }
 
-export type GameSessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "serverSeed" | "serverHash" | "clientSeed" | "nonce" | "createdAt", ExtArgs["result"]["gameSession"]>
+export type GameSessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "serverSeed" | "serverHash" | "clientSeed" | "nonce" | "createdAt", ExtArgs["result"]["gameSession"]>
+export type GameSessionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  bets?: boolean | Prisma.GameSession$betsArgs<ExtArgs>
+  _count?: boolean | Prisma.GameSessionCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type GameSessionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type GameSessionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
 
 export type $GameSessionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "GameSession"
-  objects: {}
+  objects: {
+    user: Prisma.$UserPayload<ExtArgs>
+    bets: Prisma.$RouletteBetPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    userId: number
     serverSeed: string
     serverHash: string
-    clientSeed: string | null
+    clientSeed: string
     nonce: number
     createdAt: Date
   }, ExtArgs["result"]["gameSession"]>
@@ -819,6 +1129,8 @@ readonly fields: GameSessionFieldRefs;
  */
 export interface Prisma__GameSessionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  bets<T extends Prisma.GameSession$betsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GameSession$betsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RouletteBetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -849,6 +1161,7 @@ export interface Prisma__GameSessionClient<T, Null = never, ExtArgs extends runt
  */
 export interface GameSessionFieldRefs {
   readonly id: Prisma.FieldRef<"GameSession", 'String'>
+  readonly userId: Prisma.FieldRef<"GameSession", 'Int'>
   readonly serverSeed: Prisma.FieldRef<"GameSession", 'String'>
   readonly serverHash: Prisma.FieldRef<"GameSession", 'String'>
   readonly clientSeed: Prisma.FieldRef<"GameSession", 'String'>
@@ -871,6 +1184,10 @@ export type GameSessionFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.GameSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameSessionInclude<ExtArgs> | null
+  /**
    * Filter, which GameSession to fetch.
    */
   where: Prisma.GameSessionWhereUniqueInput
@@ -889,6 +1206,10 @@ export type GameSessionFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.GameSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameSessionInclude<ExtArgs> | null
+  /**
    * Filter, which GameSession to fetch.
    */
   where: Prisma.GameSessionWhereUniqueInput
@@ -906,6 +1227,10 @@ export type GameSessionFindFirstArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the GameSession
    */
   omit?: Prisma.GameSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameSessionInclude<ExtArgs> | null
   /**
    * Filter, which GameSession to fetch.
    */
@@ -955,6 +1280,10 @@ export type GameSessionFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extens
    */
   omit?: Prisma.GameSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameSessionInclude<ExtArgs> | null
+  /**
    * Filter, which GameSession to fetch.
    */
   where?: Prisma.GameSessionWhereInput
@@ -1002,6 +1331,10 @@ export type GameSessionFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the GameSession
    */
   omit?: Prisma.GameSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameSessionInclude<ExtArgs> | null
   /**
    * Filter, which GameSessions to fetch.
    */
@@ -1051,6 +1384,10 @@ export type GameSessionCreateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.GameSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameSessionInclude<ExtArgs> | null
+  /**
    * The data needed to create a GameSession.
    */
   data: Prisma.XOR<Prisma.GameSessionCreateInput, Prisma.GameSessionUncheckedCreateInput>
@@ -1084,6 +1421,10 @@ export type GameSessionCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    */
   data: Prisma.GameSessionCreateManyInput | Prisma.GameSessionCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameSessionIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1098,6 +1439,10 @@ export type GameSessionUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the GameSession
    */
   omit?: Prisma.GameSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameSessionInclude<ExtArgs> | null
   /**
    * The data needed to update a GameSession.
    */
@@ -1150,6 +1495,10 @@ export type GameSessionUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    * Limit how many GameSessions to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameSessionIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1164,6 +1513,10 @@ export type GameSessionUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the GameSession
    */
   omit?: Prisma.GameSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameSessionInclude<ExtArgs> | null
   /**
    * The filter to search for the GameSession to update in case it exists.
    */
@@ -1191,6 +1544,10 @@ export type GameSessionDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.GameSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameSessionInclude<ExtArgs> | null
+  /**
    * Filter which GameSession to delete.
    */
   where: Prisma.GameSessionWhereUniqueInput
@@ -1211,6 +1568,30 @@ export type GameSessionDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
+ * GameSession.bets
+ */
+export type GameSession$betsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RouletteBet
+   */
+  select?: Prisma.RouletteBetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RouletteBet
+   */
+  omit?: Prisma.RouletteBetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RouletteBetInclude<ExtArgs> | null
+  where?: Prisma.RouletteBetWhereInput
+  orderBy?: Prisma.RouletteBetOrderByWithRelationInput | Prisma.RouletteBetOrderByWithRelationInput[]
+  cursor?: Prisma.RouletteBetWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RouletteBetScalarFieldEnum | Prisma.RouletteBetScalarFieldEnum[]
+}
+
+/**
  * GameSession without action
  */
 export type GameSessionDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1222,4 +1603,8 @@ export type GameSessionDefaultArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the GameSession
    */
   omit?: Prisma.GameSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameSessionInclude<ExtArgs> | null
 }
