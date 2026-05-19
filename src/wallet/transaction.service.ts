@@ -1,7 +1,7 @@
 // transaction.service.ts
 import { Injectable, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { TransactionType, TransactionStatus, Prisma } from '@prisma/client';
+import { TransactionType, TransactionStatus, Prisma } from '../../prisma/generated/prisma/client';
 
 @Injectable()
 export class TransactionService {
