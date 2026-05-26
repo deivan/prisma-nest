@@ -16,13 +16,14 @@ import { TransactionService } from './transaction.service';
 
 // DTOs (Data Transfer Objects) для валідації вхідних даних
 class CreateWalletDto {
-  userId: number;
+  // definite assignment assertion to satisfy strictPropertyInitialization
+  userId!: number;
   currency?: string;
 }
 
 class WithdrawDto {
-  amount: number;
-  idempotencyKey: string;
+  amount!: number;
+  idempotencyKey!: string;
 }
 
 @Controller('api/v1/wallets')
