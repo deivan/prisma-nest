@@ -10,13 +10,13 @@ import {
   HttpCode,
   HttpStatus
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../../prisma/generated/prisma/client';
 import { WalletService } from './wallet.service';
 import { TransactionService } from './transaction.service';
 
 // DTOs (Data Transfer Objects) для валідації вхідних даних
 class CreateWalletDto {
-  userId: string;
+  userId: number;
   currency?: string;
 }
 

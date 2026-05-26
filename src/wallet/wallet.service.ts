@@ -1,14 +1,14 @@
 // wallet.service.ts
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../../prisma/generated/prisma/client';
 
 @Injectable()
 export class WalletService {
   constructor(private prisma: PrismaService) {}
 
   // Create: Створення гаманця для нового користувача
-  async createWallet(userId: string, currency: string = 'UAH') {
+  async createWallet(userId: number, currency: string = 'UAH') {
     return this.prisma.wallet.create({
       data: {
         userId,
