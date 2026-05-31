@@ -16,12 +16,17 @@ export interface Move {
 }
 
 export interface BattleRoom {
-  id: string; // UUID кімнати
+  id: string;
   player1Id: number;
   player2Id: number;
   status: 'active' | 'finished';
   createdAt: number;
+  
+  // Додаємо поточне здоров'я для швидкого доступу
+  player1CurrentHealth: number; 
+  player2CurrentHealth: number; 
+
   player1moves: Move[];
   player2moves: Move[];
-  winnerId?: number;
+  winnerId?: number | null; // null може означати нічию
 }

@@ -1,14 +1,19 @@
+import crypto from 'crypto';
+import { Redis } from 'ioredis';
+
 import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
-import { Redis } from 'ioredis'; // Або ваш клієнт Redis
+
 import { DuelRequest, BattleRoom, Move } from './battle.interface';
 import { MakeMoveDto } from './battle.dto';
-import crypto from 'crypto';
+import { BattleEngineService } from './battle-engine.service';
 
 @Injectable()
 export class BattleService {
   constructor(
     @Inject('REDIS_CLIENT') private readonly redis: Redis,
+    private readonly battleEngine: BattleEngineService,
   ) {}
+
 
   async createDuelRequest(challengerId: number): Promise<DuelRequest> {
     // Для ID заявки можна використати атомарний інкремент Redis або просто timestamp
@@ -67,12 +72,15 @@ export class BattleService {
       player2Id: opponentId,
       status: 'active',
       createdAt: Date.now(),
+      player1CurrentHealth: this.battleEngine.INITIAL_HEALTH,
+      player2CurrentHealth: this.battleEngine.INITIAL_HEALTH,
       player1moves: [],
       player2moves: [],
     };
 
     // Транзакція або пайплайн для збереження атомарності
     const pipeline = this.redis.pipeline();
+
     pipeline.set(`duel_request:${duelId}`, JSON.stringify(duelRequest));
     pipeline.srem('duel_requests:pending', duelId);
     pipeline.set(`battle_room:${roomId}`, JSON.stringify(battleRoom));
@@ -85,7 +93,7 @@ export class BattleService {
     const rawRoom = await this.redis.get(`battle_room:${roomId}`);
     if (!rawRoom) throw new NotFoundException('Кімната не знайдена');
 
-    const room: BattleRoom = JSON.parse(rawRoom);
+    let room: BattleRoom = JSON.parse(rawRoom);
 
     if (room.status !== 'active') {
       throw new BadRequestException('Цей двобій вже завершено');
@@ -98,28 +106,31 @@ export class BattleService {
       throw new BadRequestException('Ви не є учасником цього двобою');
     }
 
-    // Для першої ітерації: хардкод поточних значень здоров'я та удару
-    // Пізніше ці дані можна отримувати з бази Postgres або кешу гравця (з Wallet / User Stats)
+    // Захист від подвійного ходу в одному раунді
+    if (isPlayer1 && room.player1moves.length > room.player2moves.length) {
+      throw new BadRequestException('Ви вже зробили хід, очікуйте на супротивника');
+    }
+    if (isPlayer2 && room.player2moves.length > room.player1moves.length) {
+      throw new BadRequestException('Ви вже зробили хід, очікуйте на супротивника');
+    }
+
+    // Формуємо об'єкт ходу, беручи поточне здоров'я ДО розрахунку цього раунду
     const move: Move = {
       playerId: userId,
       attackZone: dto.attackZone,
       defenseZone: dto.defenseZone,
-      health: 10, // TODO: Отримати з профілю/попереднього стану
-      strike: 3,  // TODO: Отримати з параметрів гравця
+      health: isPlayer1 ? room.player1CurrentHealth : room.player2CurrentHealth,
+      strike: this.battleEngine.BASE_STRIKE, 
     };
 
-    // Зберігаємо хід
     if (isPlayer1) {
       room.player1moves.push(move);
     } else {
       room.player2moves.push(move);
     }
 
-    // ТУТ БУДЕ ЛОГІКА РОЗРАХУНКУ РЕЗУЛЬТАТІВ РАУНДУ
-    // Якщо обидва гравці зробили хід (наприклад, довжини масивів ходів рівні):
-    // 1. Рахуємо втрати здоров'я згідно механіки блокування
-    // 2. Оновлюємо здоров'я
-    // 3. Якщо здоров'я <= 0, змінюємо room.status = 'finished' і визначаємо room.winnerId
+    // Передаємо кімнату в рушій. Якщо обидва походили — здоров'я перерахується
+    room = this.battleEngine.processRound(room);
 
     await this.redis.set(`battle_room:${roomId}`, JSON.stringify(room));
     return room;
