@@ -25,13 +25,15 @@ export class UsersService {
   async login(
     loginDto: { email: string; password: string },
     request: Request
-  ): Promise<User | null> {
+  ): Promise<User | Error> {
     const { email, password } = loginDto;
     const user = await this.prisma.user.findUnique({ where: { email } });
     if (user && user.password === password) {
       (request.session as any).user = user;
+      return user;
+    } else {
+      throw new Error('Invalid email or password');
     }
-    return null; // Або можна кинути помилку, якщо аутентифікація не вдалася
   }
 
   async findAll(params: {

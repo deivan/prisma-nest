@@ -8,6 +8,8 @@ import {
   Req, 
   ParseIntPipe 
 } from '@nestjs/common';
+import express from 'express';
+
 import { BattleService } from './battle.service';
 import { MakeMoveDto } from './battle.dto';
 
@@ -19,8 +21,9 @@ export class BattleController {
   constructor(private readonly battleService: BattleService) {}
 
   @Post('duel-requests')
-  async createDuelRequest(@Req() req) {
+  async createDuelRequest(@Req() req: express.Request) {
     const userId = (req.session as any)?.user?.id; // Очікується з JWT Payload
+    console.log('User object from session:', (req.session as any)?.user);
     return this.battleService.createDuelRequest(userId);
   }
 
@@ -32,7 +35,7 @@ export class BattleController {
   @Post('duel-requests/:id/accept')
   async acceptDuelRequest(
     @Param('id', ParseIntPipe) id: number, 
-    @Req() req
+    @Req() req: express.Request
   ) {
     const userId = (req.session as any)?.user?.id;
     return this.battleService.acceptDuelRequest(id, userId);
@@ -42,7 +45,7 @@ export class BattleController {
   async makeMove(
     @Param('id') battleRoomId: string, 
     @Body() makeMoveDto: MakeMoveDto,
-    @Req() req
+    @Req() req: express.Request
   ) {
     const userId = (req.session as any)?.user?.id;
     return this.battleService.makeMove(battleRoomId, userId, makeMoveDto);
