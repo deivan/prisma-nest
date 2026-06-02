@@ -76,6 +76,8 @@ export class BattleService {
       player2CurrentHealth: this.battleEngine.INITIAL_HEALTH,
       player1moves: [],
       player2moves: [],
+      currentRound: 0,
+      roundDeadline: 0
     };
 
     // Транзакція або пайплайн для збереження атомарності

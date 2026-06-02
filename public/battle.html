@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battle Test Client</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #1e1e24; color: #f5f5f5; padding: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        .panel { background: #2b2b36; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        input, button { padding: 10px; margin: 5px 0; border: none; border-radius: 4px; }
+        input { width: calc(100% - 20px); }
+        button { background: #4caf50; color: white; cursor: pointer; font-weight: bold; }
+        button:hover { background: #45a049; }
+        button:disabled { background: #555; cursor: not-allowed; }
+        
+        .room-item { background: #3c3c4a; padding: 10px; margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .battle-arena { display: flex; justify-content: space-between; text-align: center; margin-top: 20px; }
+        .player-zone { width: 45%; background: #3c3c4a; padding: 15px; border-radius: 8px; }
+        .health-bar { font-size: 24px; font-weight: bold; color: #ff5252; margin-bottom: 15px; }
+        
+        .body-parts { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+        .body-part { width: 100px; padding: 15px; background: #555; cursor: pointer; border-radius: 4px; border: 2px solid transparent; transition: 0.2s; }
+        .body-part:hover { background: #666; }
+        .body-part.selected-attack { border-color: #ff5252; background: #ffaaaa; color: #000; }
+        .body-part.selected-defense { border-color: #4caf50; background: #aaffaa; color: #000; }
+
+        .center-controls { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .timer { font-size: 32px; font-weight: bold; color: #ffca28; margin-bottom: 10px; }
+        .strike-btn { background: #ff5252; font-size: 20px; padding: 15px 30px; }
+        .strike-btn:hover { background: #e53935; }
+
+        #log-zone { max-height: 200px; overflow-y: auto; background: #111; padding: 10px; font-family: monospace; border-radius: 4px; }
+        .log-entry { border-bottom: 1px solid #333; padding: 5px 0; }
+        
+        /* Utility classes */
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="login-zone" class="panel">
+        <h2>Вхід до системи</h2>
+        <input type="email" id="email" placeholder="Email" value="player1@test.com">
+        <input type="password" id="password" placeholder="Пароль" value="password">
+        <button onclick="login()">Логін</button>
+    </div>
+
+    <div id="lobby-zone" class="panel hidden">
+        <h2>Лобі</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <span>Ви увійшли як: <strong id="user-info"></strong></span>
+            <div>
+                <button onclick="fetchRooms()">Оновити список</button>
+                <button onclick="createDuelRequest()" style="background: #2196f3;">Створити заявку</button>
+            </div>
+        </div>
+        <div id="rooms-list"></div>
+    </div>
+
+    <div id="battle-zone" class="panel hidden">
+        <h2>Двобій <span id="round-info" style="font-size: 16px; color: #aaa;"></span></h2>
+        
+        <div class="battle-arena">
+            <div class="player-zone">
+                <h3>Мій боєць</h3>
+                <div class="health-bar">HP: <span id="my-hp">10</span></div>
+                <p>Оберіть зону <b>ЗАХИСТУ</b></p>
+                <div class="body-parts">
+                    <div class="body-part" onclick="selectDefense('head')" id="def-head">Голова</div>
+                    <div class="body-part" onclick="selectDefense('body')" id="def-body">Тіло</div>
+                    <div class="body-part" onclick="selectDefense('legs')" id="def-legs">Ноги</div>
+                </div>
+            </div>
+
+            <div class="center-controls">
+                <div class="timer" id="timer">00:00</div>
+                <button class="strike-btn" id="strike-btn" onclick="makeMove()">УДАР!</button>
+            </div>
+
+            <div class="player-zone">
+                <h3>Супротивник</h3>
+                <div class="health-bar">HP: <span id="enemy-hp">10</span></div>
+                <p>Оберіть зону <b>АТАКИ</b></p>
+                <div class="body-parts">
+                    <div class="body-part" onclick="selectAttack('head')" id="atk-head">Голова</div>
+                    <div class="body-part" onclick="selectAttack('body')" id="atk-body">Тіло</div>
+                    <div class="body-part" onclick="selectAttack('legs')" id="atk-legs">Ноги</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="log-panel" class="panel hidden">
+        <h3>Лог подій</h3>
+        <div id="log-zone"></div>
+    </div>
+</div>
+
+<script>
+    // Базовий URL для API
+    const API_URL = 'http://localhost:3300'; 
+    
+    // Стан додатку
+    let token = '';
+    let currentUser = null;
+    let currentRoomId = null;
+    let socket = null;
+    let timerInterval = null;
+    
+    let selectedAttack = null;
+    let selectedDefense = null;
+
+    // --- 1. АВТОРИЗАЦІЯ ---
+    async function login() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+
+            const response = await fetch(`${API_URL}/users/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            
+            if (!response.ok) throw new Error('Помилка авторизації');
+            
+            const data = await response.json();
+            // token = data.access_token; // Підставте ключ, який повертає ваш бекенд
+            currentUser = data;   // Має містити id користувача
+
+            document.getElementById('login-zone').classList.add('hidden');
+            document.getElementById('lobby-zone').classList.remove('hidden');
+            document.getElementById('user-info').innerText = currentUser.email || currentUser.id;
+            
+            fetchRooms();
+
+    }
+
+    // --- 2. ЛОБІ ТА ЗАЯВКИ ---
+    async function fetchRooms() {
+        try {
+            const response = await fetch(`${API_URL}/duel-requests`, {
+                // headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const requests = await response.json();
+            
+            const listDiv = document.getElementById('rooms-list');
+            listDiv.innerHTML = '';
+            
+            if (requests.length === 0) {
+                listDiv.innerHTML = '<p>Немає активних заявок.</p>';
+                return;
+            }
+
+            requests.forEach(req => {
+                const item = document.createElement('div');
+                item.className = 'room-item';
+                item.innerHTML = `
+                    <span>Заявка #${req.id} (Гравець ${req.challengerId})</span>
+                    <button onclick="acceptDuel(${req.id})" ${req.challengerId === currentUser.id ? 'disabled title="Ваша заявка"' : ''}>
+                        Прийняти
+                    </button>
+                `;
+                listDiv.appendChild(item);
+            });
+        } catch (error) {
+            console.error('Помилка завантаження лобі:', error);
+        }
+    }
+
+    async function createDuelRequest() {
+        try {
+            await fetch(`${API_URL}/duel-requests`, {
+                method: 'POST',
+                // headers: { 'Authorization': `Bearer ${token}` }
+            });
+            fetchRooms();
+            logMsg('Ви створили заявку на двобій. Очікуйте суперника...');
+            document.getElementById('log-panel').classList.remove('hidden');
+        } catch (error) {
+            alert('Помилка створення заявки');
+        }
+    }
+
+    async function acceptDuel(duelId) {
+        try {
+            const response = await fetch(`${API_URL}/duel-requests/${duelId}/accept`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            const data = await response.json();
+            currentRoomId = data.battleRoom.id;
+            startBattle(currentRoomId);
+        } catch (error) {
+            console.error('Помилка приєднання до двобою:', error);
+        }
+    }
+
+    // --- 3. ДВОБІЙ ТА WEBSOCKETS ---
+    function startBattle(roomId) {
+        document.getElementById('lobby-zone').classList.add('hidden');
+        document.getElementById('battle-zone').classList.remove('hidden');
+        document.getElementById('log-panel').classList.remove('hidden');
+        
+        currentRoomId = roomId;
+        logMsg('Бій почався! Кімната: ' + roomId);
+
+        // Підключення до WebSockets
+        socket = io(`${API_URL}/battle`); // Namespace /battle
+
+        socket.on('connect', () => {
+            socket.emit('joinRoom', { roomId });
+        });
+
+        // Слухаємо події від сервера
+        socket.on('room_state', renderBattleState);
+        
+        socket.on('opponent_moved', (data) => {
+            logMsg(`Супротивник готовий. Очікуємо на ваш хід!`);
+        });
+
+        socket.on('round_completed', (room) => {
+            logMsg(`>>> РАУНД ЗАВЕРШЕНО <<<`);
+            renderBattleState(room);
+            resetSelection();
+        });
+
+        socket.on('round_timeout', (data) => {
+            logMsg(`⏰ ТАЙМАУТ! ${data.message}`);
+            renderBattleState(data.roomState);
+            resetSelection();
+        });
+
+        socket.on('battle_finished', (data) => {
+            clearInterval(timerInterval);
+            document.getElementById('timer').innerText = 'БІЙ ЗАВЕРШЕНО';
+            document.getElementById('strike-btn').disabled = true;
+            
+            if (data.winnerId === null) {
+                logMsg(`🏆 НІЧИЯ! Обидва бійці впали.`);
+            } else if (data.winnerId === currentUser.id) {
+                logMsg(`🏆 ВИ ПЕРЕМОГЛИ!`);
+                document.getElementById('timer').style.color = '#4caf50';
+            } else {
+                logMsg(`💀 ВИ ПРОГРАЛИ!`);
+                document.getElementById('timer').style.color = '#ff5252';
+            }
+        });
+    }
+
+    function renderBattleState(room) {
+        document.getElementById('round-info').innerText = `(Раунд ${room.currentRound})`;
+        
+        const isPlayer1 = room.player1Id === currentUser.id;
+        
+        // Оновлення здоров'я
+        document.getElementById('my-hp').innerText = isPlayer1 ? room.player1CurrentHealth : room.player2CurrentHealth;
+        document.getElementById('enemy-hp').innerText = isPlayer1 ? room.player2CurrentHealth : room.player1CurrentHealth;
+
+        // Блокування кнопки, якщо гравець вже зробив хід у цьому раунді
+        const myMoves = isPlayer1 ? room.player1moves : room.player2moves;
+        if (myMoves.length === room.currentRound) {
+            document.getElementById('strike-btn').disabled = true;
+            document.getElementById('strike-btn').innerText = 'ОЧІКУВАННЯ...';
+        } else {
+            document.getElementById('strike-btn').disabled = false;
+            document.getElementById('strike-btn').innerText = 'УДАР!';
+        }
+
+        // Запуск таймера
+        startTimer(room.roundDeadline);
+    }
+
+    function startTimer(deadlineTimestamp) {
+        clearInterval(timerInterval);
+        
+        timerInterval = setInterval(() => {
+            const now = Date.now();
+            const diff = deadlineTimestamp - now;
+            
+            if (diff <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById('timer').innerText = 'Час вийшов!';
+            } else {
+                document.getElementById('timer').innerText = `⏳ ${Math.ceil(diff / 1000)}с`;
+            }
+        }, 1000);
+    }
+
+    // --- 4. ІНТЕРАКТИВ БОЮ ---
+    function selectAttack(zone) {
+        if (document.getElementById('strike-btn').disabled) return;
+        selectedAttack = zone;
+        document.querySelectorAll('[id^="atk-"]').forEach(el => el.classList.remove('selected-attack'));
+        document.getElementById(`atk-${zone}`).classList.add('selected-attack');
+    }
+
+    function selectDefense(zone) {
+        if (document.getElementById('strike-btn').disabled) return;
+        selectedDefense = zone;
+        document.querySelectorAll('[id^="def-"]').forEach(el => el.classList.remove('selected-defense'));
+        document.getElementById(`def-${zone}`).classList.add('selected-defense');
+    }
+
+    function resetSelection() {
+        selectedAttack = null;
+        selectedDefense = null;
+        document.querySelectorAll('.body-part').forEach(el => {
+            el.classList.remove('selected-attack', 'selected-defense');
+        });
+    }
+
+    async function makeMove() {
+        if (!selectedAttack || !selectedDefense) {
+            alert('Оберіть зону атаки та зону захисту!');
+            return;
+        }
+
+        try {
+            document.getElementById('strike-btn').disabled = true;
+            document.getElementById('strike-btn').innerText = 'ВІДПРАВКА...';
+
+            const response = await fetch(`${API_URL}/battles/${currentRoomId}/move`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify({
+                    attackZone: selectedAttack,
+                    defenseZone: selectedDefense
+                })
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.message);
+            }
+
+            logMsg(`Ваш хід відправлено (Атака: ${selectedAttack}, Захист: ${selectedDefense})`);
+        } catch (error) {
+            alert(error.message);
+            document.getElementById('strike-btn').disabled = false;
+            document.getElementById('strike-btn').innerText = 'УДАР!';
+        }
+    }
+
+    // --- ДОПОМІЖНІ ФУНКЦІЇ ---
+    function logMsg(msg) {
+        const logZone = document.getElementById('log-zone');
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        
+        const time = new Date().toLocaleTimeString();
+        entry.innerHTML = `<span style="color:#888">[${time}]</span> ${msg}`;
+        
+        logZone.prepend(entry); // Додаємо на початок
+    }
+</script>
+
+</body>
+</html>

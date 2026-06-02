@@ -21,6 +21,10 @@ export interface BattleRoom {
   player2Id: number;
   status: 'active' | 'finished';
   createdAt: number;
+
+  // Нові поля для контролю часу
+  currentRound: number;       // Поточний номер раунду (починаючи з 1)
+  roundDeadline: number;      // Timestamp (ms), до якого треба зробити хід
   
   // Додаємо поточне здоров'я для швидкого доступу
   player1CurrentHealth: number; 
