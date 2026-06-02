@@ -1,4 +1,6 @@
 import { NestFactory } from '@nestjs/core';
+import session from 'express-session';
+
 import { AppModule } from './app.module';
 import { RedisIoAdapter } from './redis-io.adapter';
 
@@ -14,6 +16,12 @@ async function bootstrap() {
   const redisIoAdapter = new RedisIoAdapter(app);
   await redisIoAdapter.connectToRedis();
   app.useWebSocketAdapter(redisIoAdapter);
+
+  app.use(session({
+    secret: 'ababagalamaga',
+    resave: false,
+    saveUninitialized: false
+  }));
 
   await app.listen(process.env.PORT ?? 3300);
 }

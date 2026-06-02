@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { Request } from 'express';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -18,6 +20,18 @@ export class UsersService {
       throw error; // Rethrow the error after logging
     }
     return user;
+  }
+
+  async login(
+    loginDto: { email: string; password: string },
+    request: Request
+  ): Promise<User | null> {
+    const { email, password } = loginDto;
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (user && user.password === password) {
+      (request.session as any).user = user;
+    }
+    return null; // Або можна кинути помилку, якщо аутентифікація не вдалася
   }
 
   async findAll(params: {

@@ -20,7 +20,7 @@ export class BattleController {
 
   @Post('duel-requests')
   async createDuelRequest(@Req() req) {
-    const userId = req.user.id; // Очікується з JWT Payload
+    const userId = (req.session as any)?.user?.id; // Очікується з JWT Payload
     return this.battleService.createDuelRequest(userId);
   }
 
@@ -34,7 +34,7 @@ export class BattleController {
     @Param('id', ParseIntPipe) id: number, 
     @Req() req
   ) {
-    const userId = req.user.id;
+    const userId = (req.session as any)?.user?.id;
     return this.battleService.acceptDuelRequest(id, userId);
   }
 
@@ -44,7 +44,7 @@ export class BattleController {
     @Body() makeMoveDto: MakeMoveDto,
     @Req() req
   ) {
-    const userId = req.user.id;
+    const userId = (req.session as any)?.user?.id;
     return this.battleService.makeMove(battleRoomId, userId, makeMoveDto);
   }
 
