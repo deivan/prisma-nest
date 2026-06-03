@@ -138,6 +138,21 @@
             
             fetchRooms();
 
+            // Підключення до WebSockets
+            socket = io(`${API_URL}/battle`); // Namespace /battle
+
+            socket.on('connect', () => {
+                console.log('Підключено до WebSocket сервера');
+            });
+            socket.on('battle_started', data => {
+                console.log('Отримано подію battle_started:', data);
+                socket.emit('joinRoom', { roomId: data.roomId });
+                setTimeout(() => {
+                    if (data.userId === currentUser.id) {
+                        startBattle(data.roomId);
+                    }
+                }, 1000);
+            });
     }
 
     // --- 2. ЛОБІ ТА ЗАЯВКИ ---
@@ -209,13 +224,6 @@
         
         currentRoomId = roomId;
         logMsg('Бій почався! Кімната: ' + roomId);
-
-        // Підключення до WebSockets
-        socket = io(`${API_URL}/battle`); // Namespace /battle
-
-        socket.on('connect', () => {
-            socket.emit('joinRoom', { roomId });
-        });
 
         // Слухаємо події від сервера
         socket.on('room_state', renderBattleState);

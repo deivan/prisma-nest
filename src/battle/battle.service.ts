@@ -1,17 +1,21 @@
 import crypto from 'crypto';
 import { Redis } from 'ioredis';
 
-import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, BadRequestException, forwardRef } from '@nestjs/common';
 
 import { DuelRequest, BattleRoom, Move } from './battle.interface';
 import { MakeMoveDto } from './battle.dto';
 import { BattleEngineService } from './battle-engine.service';
+import { BattleGateway } from './battle.gateway';
 
 @Injectable()
 export class BattleService {
+  private activeTimers = new Map<string, NodeJS.Timeout>();
   constructor(
     @Inject('REDIS_CLIENT') private readonly redis: Redis,
     private readonly battleEngine: BattleEngineService,
+    @Inject(forwardRef(() => BattleGateway))
+    private readonly battleGateway: BattleGateway,
   ) {}
 
 
@@ -59,6 +63,7 @@ export class BattleService {
     }
 
     const roomId = crypto.randomUUID();
+    const deadline = Date.now() + this.battleEngine.ROUND_DURATION;
 
     // Оновлюємо статус заявки
     duelRequest.status = 'accepted';
@@ -72,12 +77,12 @@ export class BattleService {
       player2Id: opponentId,
       status: 'active',
       createdAt: Date.now(),
+      currentRound: 1,
+      roundDeadline: deadline,
       player1CurrentHealth: this.battleEngine.INITIAL_HEALTH,
       player2CurrentHealth: this.battleEngine.INITIAL_HEALTH,
       player1moves: [],
-      player2moves: [],
-      currentRound: 0,
-      roundDeadline: 0
+      player2moves: []
     };
 
     // Транзакція або пайплайн для збереження атомарності
@@ -87,6 +92,11 @@ export class BattleService {
     pipeline.srem('duel_requests:pending', duelId);
     pipeline.set(`battle_room:${roomId}`, JSON.stringify(battleRoom));
     await pipeline.exec();
+
+    this.startRoundTimer(roomId, 1); // Запускаємо таймер для першого раунду
+    this.battleGateway.broadcastAll('battle_started', JSON.stringify(
+      { userId: duelRequest.challengerId, roomId }
+    ));
 
     return { duelRequest, battleRoom };
   }
@@ -131,11 +141,94 @@ export class BattleService {
       room.player2moves.push(move);
     }
 
-    // Передаємо кімнату в рушій. Якщо обидва походили — здоров'я перерахується
-    room = this.battleEngine.processRound(room);
+    // Якщо обидва гравці успішно походили до дедлайну
+    if (room.player1moves.length === room.player2moves.length) {
+      // Скасовуємо запланований серверний таймер авто-ходу
+      this.clearRoundTimer(roomId);
 
-    await this.redis.set(`battle_room:${roomId}`, JSON.stringify(room));
+      // Рахуємо раунд
+      room = this.battleEngine.processRound(room);
+      await this.redis.set(`battle_room:${roomId}`, JSON.stringify(room));
+
+      // Якщо бій триває, запускаємо новий таймер для наступного раунду
+      if (room.status === 'active') {
+        this.startRoundTimer(roomId, room.currentRound);
+      }
+    } else {
+      // Зберігаємо хід першого гравця, другий ще має час
+      await this.redis.set(`battle_room:${roomId}`, JSON.stringify(room));
+    }
+
     return room;
+  }
+
+  /**
+   * Метод, який викликається автоматично таймером після 30 секунд
+   */
+  private async handleRoundTimeout(roomId: string, roundNumber: number): Promise<void> {
+    const rawRoom = await this.redis.get(`battle_room:${roomId}`);
+    if (!rawRoom) return;
+
+    let room: BattleRoom = JSON.parse(rawRoom);
+
+    // Перевіряємо, чи кімната ще активна і чи таймер актуальний для цього раунду
+    if (room.status !== 'active' || room.currentRound !== roundNumber) {
+      return;
+    }
+
+    const expectedMovesCount = roundNumber;
+
+    // Якщо гравець 1 не зробив хід — генеруємо авто-хід з null
+    if (room.player1moves.length < expectedMovesCount) {
+      room.player1moves.push({
+        playerId: room.player1Id,
+        attackZone: 'body',
+        defenseZone: 'body',
+        health: room.player1CurrentHealth,
+        strike: 1, // Не б'є, бо пропустив час
+      });
+    }
+
+    // Якщо гравець 2 не зробив хід — генеруємо авто-хід з null
+    if (room.player2moves.length < expectedMovesCount) {
+      room.player2moves.push({
+        playerId: room.player2Id,
+        attackZone: 'legs',
+        defenseZone: 'legs',
+        health: room.player2CurrentHealth,
+        strike: 1,
+      });
+    }
+
+    // Закриваємо раунд через рушій
+    room = this.battleEngine.processRound(room);
+    await this.redis.set(`battle_room:${roomId}`, JSON.stringify(room));
+
+    // Якщо гра продовжується, запускаємо таймер для наступного раунду
+    if (room.status === 'active') {
+      this.startRoundTimer(roomId, room.currentRound);
+    }
+  }
+
+  // --- Допоміжні методи для керування таймаутами ---
+
+  private startRoundTimer(roomId: string, roundNumber: number): void {
+    this.clearRoundTimer(roomId); // Про всяк випадок чистимо старий
+
+    const timer = setTimeout(
+      () => this.handleRoundTimeout(roomId, roundNumber),
+      this.battleEngine.ROUND_DURATION
+    );
+
+    this.activeTimers.set(roomId, timer);
+  }
+
+  private clearRoundTimer(roomId: string): void {
+    const timer = this.activeTimers.get(roomId);
+    if (timer) {
+      clearTimeout(timer);
+      this.activeTimers.delete(roomId);
+    }
   }
 
   async getBattleStatus(roomId: string): Promise<BattleRoom> {
