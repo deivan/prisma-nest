@@ -146,10 +146,17 @@
             });
             socket.on('battle_started', data => {
                 console.log('Отримано подію battle_started:', data);
-                socket.emit('joinRoom', { roomId: data.roomId });
+                let parsedData;
+                try {
+                    parsedData = JSON.parse(data);
+                } catch (e) {
+                    console.error('Помилка парсингу даних:', e);
+                    return;
+                }
+                socket.emit('joinRoom', { roomId: parsedData.roomId });
                 setTimeout(() => {
-                    if (data.userId === currentUser.id) {
-                        startBattle(data.roomId);
+                    if (parsedData.userId === currentUser.id) {
+                        startBattle(parsedData.roomId);
                     }
                 }, 1000);
             });

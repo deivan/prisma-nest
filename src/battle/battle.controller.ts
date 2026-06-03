@@ -23,7 +23,7 @@ export class BattleController {
   @Post('duel-requests')
   async createDuelRequest(@Req() req: express.Request) {
     const userId = (req.session as any)?.user?.id; // Очікується з JWT Payload
-    console.log('User object from session:', (req.session as any)?.user);
+    
     return this.battleService.createDuelRequest(userId);
   }
 
